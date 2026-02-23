@@ -430,6 +430,24 @@ export default function App() {
     fileInputRef.current?.click();
   }
 
+  async function loadDemoFile() {
+    setError("");
+    try {
+      const response = await fetch(`${API_BASE}/api/commissions/demo-file`);
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.detail || "No se pudo descargar el fichero de prueba.");
+      }
+      const blob = await response.blob();
+      const demoFile = new File([blob], "demo_comerciales.xlsx", {
+        type: blob.type || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      });
+      resetForNewFile(demoFile);
+    } catch (err) {
+      setError(err.message || "Error inesperado al cargar fichero de prueba.");
+    }
+  }
+
   async function loadExcel(fileToLoad = file) {
     if (!fileToLoad) {
       setError("Debes seleccionar un Excel.");
@@ -528,6 +546,9 @@ export default function App() {
               <button type="button" className="secondary" onClick={pickFile}>
                 Elegir archivo
               </button>
+              <button type="button" className="secondary" onClick={loadDemoFile}>
+                Cargar fichero de prueba
+              </button>
             </div>
           </div>
 
@@ -583,7 +604,7 @@ export default function App() {
             <section className="panel comparison">
               <h2>Comparativa periodo</h2>
               <p>
-                {periodComparison.current.label} vs {periodComparison.previous.label}:{" "}
+                {periodComparison.previous.label} vs {periodComparison.current.label}:{" "}
                 <strong className={periodComparison.delta >= 0 ? "pos" : "neg"}>
                   {money(periodComparison.delta)} ({periodComparison.pct.toFixed(1)}%)
                 </strong>

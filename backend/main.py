@@ -12,6 +12,7 @@ from typing import Any
 import pandas as pd
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
 app = FastAPI(title="MRW Commissions API")
 
@@ -386,9 +387,118 @@ def parse_mapping_json(mapping_json: str | None) -> dict[str, Any] | None:
     return data
 
 
+def resolve_effective_mapping(
+    df: pd.DataFrame,
+    detected: dict[str, Any],
+    provided_mapping: dict[str, Any] | None,
+    saved_mapping: dict[str, Any] | None,
+) -> dict[str, Any]:
+    columns = dataframe_columns(df)
+    raw_mapping = provided_mapping or saved_mapping or detected
+    effective = sanitize_mapping(raw_mapping, columns)
+
+    # Si usamos mapping guardado (sin mapping explicito en la request) y el Excel
+    # actual trae mas meses detectados, priorizamos los meses detectados para evitar
+    # quedarse con un subconjunto antiguo (ej. solo enero/febrero).
+    if not provided_mapping:
+        saved_months = effective.get("month_columns", [])
+        detected_months = detected.get("month_columns", [])
+        if (
+            isinstance(saved_months, list)
+            and isinstance(detected_months, list)
+            and saved_months
+            and len(saved_months) < len(detected_months)
+            and set(saved_months).issubset(set(detected_months))
+        ):
+            effective["month_columns"] = detected_months
+
+    return effective
+
+
+def build_demo_excel_bytes() -> bytes:
+    demo_rows = [
+        {
+            "Nombre Comercial": "Ana Lopez",
+            "Razon Social": "Panaderia Sol",
+            "Enero 2026": 4200,
+            "Febrero 2026": 4500,
+            "Marzo 2026": 4700,
+            "Abril 2026": 4600,
+            "Mayo 2026": 4900,
+            "Junio 2026": 5100,
+        },
+        {
+            "Nombre Comercial": "Ana Lopez",
+            "Razon Social": "Clinica Norte",
+            "Enero 2026": 3100,
+            "Febrero 2026": 3300,
+            "Marzo 2026": 3250,
+            "Abril 2026": 3400,
+            "Mayo 2026": 3550,
+            "Junio 2026": 3650,
+        },
+        {
+            "Nombre Comercial": "David Ruiz",
+            "Razon Social": "Textiles Delta",
+            "Enero 2026": 5600,
+            "Febrero 2026": 5200,
+            "Marzo 2026": 5900,
+            "Abril 2026": 5750,
+            "Mayo 2026": 6100,
+            "Junio 2026": 6300,
+        },
+        {
+            "Nombre Comercial": "David Ruiz",
+            "Razon Social": "Logistica Sur",
+            "Enero 2026": 2800,
+            "Febrero 2026": 3000,
+            "Marzo 2026": 3150,
+            "Abril 2026": 3050,
+            "Mayo 2026": 3250,
+            "Junio 2026": 3400,
+        },
+        {
+            "Nombre Comercial": "Marta Gil",
+            "Razon Social": "Hotel Costa",
+            "Enero 2026": 4900,
+            "Febrero 2026": 5050,
+            "Marzo 2026": 5300,
+            "Abril 2026": 5200,
+            "Mayo 2026": 5450,
+            "Junio 2026": 5600,
+        },
+        {
+            "Nombre Comercial": "Marta Gil",
+            "Razon Social": "Academia Atlas",
+            "Enero 2026": 2600,
+            "Febrero 2026": 2750,
+            "Marzo 2026": 2900,
+            "Abril 2026": 2850,
+            "Mayo 2026": 3050,
+            "Junio 2026": 3200,
+        },
+    ]
+    df = pd.DataFrame(demo_rows)
+    buffer = io.BytesIO()
+    with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
+        df.to_excel(writer, sheet_name="Ventas", index=False)
+    return buffer.getvalue()
+
+
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/api/commissions/demo-file")
+def demo_file() -> StreamingResponse:
+    content = build_demo_excel_bytes()
+    headers = {"Content-Disposition": 'attachment; filename="demo_comerciales.xlsx"'}
+    return StreamingResponse(
+        io.BytesIO(content),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers=headers,
+    )
 
 
 @app.get("/api/commissions/mapping")
@@ -413,9 +523,8 @@ async def inspect(
     detected = detect_mapping(df)
     provided_mapping = parse_mapping_json(mapping_json)
     saved_mapping = get_saved_mapping()
-    effective_input = provided_mapping or saved_mapping
     columns = dataframe_columns(df)
-    effective_mapping = sanitize_mapping(effective_input or detected, columns)
+    effective_mapping = resolve_effective_mapping(df, detected, provided_mapping, saved_mapping)
 
     normalized = normalize_dataset(df, mapping=effective_mapping)
     options = build_filter_options(normalized)
@@ -450,7 +559,8 @@ async def analyze(
     df = read_excel_df(content, filename)
     provided_mapping = parse_mapping_json(mapping_json)
     saved_mapping = get_saved_mapping()
-    mapping = provided_mapping or saved_mapping
+    detected = detect_mapping(df)
+    mapping = resolve_effective_mapping(df, detected, provided_mapping, saved_mapping)
 
     normalized = normalize_dataset(df, mapping=mapping)
     options = build_filter_options(normalized)
