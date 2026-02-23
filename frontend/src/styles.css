@@ -72,6 +72,7 @@ h1 {
   border-radius: 16px;
   padding: 1rem;
   box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+  width: 100%;
 }
 
 .top-card {
@@ -83,6 +84,7 @@ h1 {
   grid-template-columns: minmax(260px, 1.2fr) minmax(170px, 0.7fr) 180px 140px;
   gap: 0.75rem;
   align-items: end;
+  width: 100%;
 }
 
 label {
@@ -114,6 +116,8 @@ label {
   justify-content: space-between;
   align-items: center;
   gap: 0.8rem;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .upload-meta {
@@ -185,6 +189,7 @@ button:disabled {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.8rem;
+  width: 100%;
 }
 
 .picker {
@@ -264,6 +269,7 @@ button:disabled {
   margin-top: 1rem;
   display: grid;
   gap: 1rem;
+  width: 100%;
 }
 
 .kpis {
@@ -714,7 +720,7 @@ tbody tr:nth-child(even) {
   }
 
   .top-form {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .filters-grid {
