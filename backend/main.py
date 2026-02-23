@@ -445,7 +445,7 @@ def build_demo_excel_bytes() -> bytes:
             "Marzo 2026": 5900,
             "Abril 2026": 5750,
             "Mayo 2026": 6100,
-            "Junio 2026": 6300,
+            "Junio 2026": 4200,
         },
         {
             "Nombre Comercial": "David Ruiz",
@@ -455,7 +455,7 @@ def build_demo_excel_bytes() -> bytes:
             "Marzo 2026": 3150,
             "Abril 2026": 3050,
             "Mayo 2026": 3250,
-            "Junio 2026": 3400,
+            "Junio 2026": 2500,
         },
         {
             "Nombre Comercial": "Marta Gil",
