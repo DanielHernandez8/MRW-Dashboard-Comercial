@@ -80,6 +80,9 @@ Si un cliente factura `1000 EUR` y la comision es `5%`, la comision correcta es 
 ## LIVE DEMO
 https://mrw-dashboard-comercial.vercel.app
 
+Nota: el backend está en Render free, puede tardar ~30-60s en el primer uso por cold start.
+
 ## Backend Status
 https://mrw-dashboard-comercial.onrender.com/api/health
+
 
