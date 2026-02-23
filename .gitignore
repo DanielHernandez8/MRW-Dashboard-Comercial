@@ -1,0 +1,38 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Node / Frontend builds
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.vite/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+
+# Local app state
+backend/saved_mapping.json
+
+# Data files (avoid uploading real business data)
+*.xlsx
+*.xls
+*.csv
+*.db
+*.sqlite
