@@ -76,3 +76,10 @@ La deteccion de columnas es flexible: puedes adaptar la app a distintos archivos
 ## Ejemplo de calculo
 
 Si un cliente factura `1000 EUR` y la comision es `5%`, la comision correcta es `50 EUR`.
+
+## LIVE DEMO
+https://mrw-dashboard-comercial.vercel.app
+
+##Levantar Backend
+https://mrw-dashboard-comercial.onrender.com
+
