@@ -409,6 +409,37 @@ tbody tr:nth-child(even) {
   margin: 0;
 }
 
+.active-filters {
+  display: grid;
+  gap: 0.55rem;
+  border-color: #c9dbff;
+  background: #f7faff;
+}
+
+.active-filters-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.active-filters-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.chip-clear {
+  background: #eaf1ff;
+  color: #123f90;
+  border-color: #bfd3ff;
+}
+
+.chip-clear:hover {
+  background: #dbe8ff;
+}
+
 .pos {
   color: #0f8a4b;
 }
@@ -678,6 +709,10 @@ tbody tr:nth-child(even) {
 }
 
 @media (max-width: 980px) {
+  .layout {
+    padding: 1.3rem 0.8rem 1.6rem;
+  }
+
   .top-form {
     grid-template-columns: 1fr 1fr;
   }
@@ -703,10 +738,128 @@ tbody tr:nth-child(even) {
   }
 }
 
+@media (max-width: 768px) {
+  .panel {
+    padding: 0.8rem;
+    border-radius: 14px;
+  }
+
+  .top-form {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .top-form > button,
+  .top-form > label,
+  .upload-wrap {
+    width: 100%;
+  }
+
+  .picker-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-head {
+    align-items: flex-start;
+  }
+
+  .line-svg {
+    height: 190px;
+  }
+
+  .bar-row {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    text-align: left;
+  }
+
+  .bar-track {
+    width: 100%;
+  }
+
+  .pager-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 640px) {
+  .layout {
+    padding: 1rem 0.65rem 1.3rem;
+  }
+
+  h1 {
+    font-size: 1.85rem;
+  }
+
+  .subtitle {
+    font-size: 0.92rem;
+  }
+
   .upload-box {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .upload-meta strong {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .upload-box button,
+  .pager-actions button {
+    width: 100%;
+  }
+
+  .kpis p {
+    font-size: 1.15rem;
+  }
+
+  th,
+  td {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+
+  .legend-btn {
+    grid-template-columns: 10px 1fr;
+    gap: 0.4rem;
+  }
+
+  .legend-btn strong {
+    grid-column: 2;
+  }
+
+  .date-input {
+    min-width: 132px;
+    width: 100%;
+  }
+
+  .active-filters-head .secondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .chip {
+    width: 100%;
+    text-align: left;
+    border-radius: 10px;
+  }
+
+  .line-label {
+    width: 100%;
+    text-align: center;
+  }
+
+  .badge {
+    font-size: 0.72rem;
+  }
+
+  .pager-page {
+    width: 100%;
+    text-align: left;
   }
 }
 

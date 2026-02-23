@@ -403,6 +403,8 @@ export default function App() {
     );
   }, [byClienteWithExpiry]);
 
+  const hasDrillFilters = Boolean(drillComercial || drillMes || drillCliente);
+
   function updateClientExpiry(cliente, value) {
     setClientExpiryDates((prev) => {
       const next = { ...prev };
@@ -428,6 +430,12 @@ export default function App() {
 
   function pickFile() {
     fileInputRef.current?.click();
+  }
+
+  function clearAllDrillFilters() {
+    setDrillComercial("");
+    setDrillMes("");
+    setDrillCliente("");
   }
 
   async function loadDemoFile() {
@@ -609,6 +617,34 @@ export default function App() {
                   {money(periodComparison.delta)} ({periodComparison.pct.toFixed(1)}%)
                 </strong>
               </p>
+            </section>
+          )}
+
+          {hasDrillFilters && (
+            <section className="panel active-filters">
+              <div className="active-filters-head">
+                <strong>Vista filtrada</strong>
+                <button type="button" className="secondary" onClick={clearAllDrillFilters}>
+                  Volver a vista completa
+                </button>
+              </div>
+              <div className="active-filters-chips">
+                {drillComercial && (
+                  <button type="button" className="chip chip-clear" onClick={() => setDrillComercial("")}>
+                    Comercial: {drillComercial} ×
+                  </button>
+                )}
+                {drillMes && (
+                  <button type="button" className="chip chip-clear" onClick={() => setDrillMes("")}>
+                    Mes: {drillMes} ×
+                  </button>
+                )}
+                {drillCliente && (
+                  <button type="button" className="chip chip-clear" onClick={() => setDrillCliente("")}>
+                    Cliente: {drillCliente} ×
+                  </button>
+                )}
+              </div>
             </section>
           )}
 
